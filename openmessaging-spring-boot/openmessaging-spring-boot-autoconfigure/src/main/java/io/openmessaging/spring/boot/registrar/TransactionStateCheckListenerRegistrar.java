@@ -22,6 +22,7 @@ import io.openmessaging.spring.boot.annotation.OMSTransactionStateCheckListener;
 import io.openmessaging.spring.support.AccessPointContainer;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.GenericApplicationContext;
@@ -29,12 +30,12 @@ import org.springframework.context.support.GenericApplicationContext;
 import java.util.Map;
 
 /**
- * Register {@link OMSTransactionStateCheckListener} to BeanDefinitionRegistry
+ * Register {@link OMSTransactionStateCheckListener} to AccessPointContainer.
  *
  * @version OMS 1.0.0
  * @since OMS 1.0.0
  */
-public class TransactionStateCheckListenerRegistrar implements ApplicationContextAware, InitializingBean {
+public class TransactionStateCheckListenerRegistrar implements ApplicationContextAware, InitializingBean, BeanPostProcessor {
 
     private AccessPointContainer accessPointContainer;
     private GenericApplicationContext applicationContext;

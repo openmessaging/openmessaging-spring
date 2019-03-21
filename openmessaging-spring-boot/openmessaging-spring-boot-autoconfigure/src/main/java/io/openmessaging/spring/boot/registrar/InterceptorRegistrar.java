@@ -32,7 +32,7 @@ import org.springframework.context.support.GenericApplicationContext;
 import java.util.Map;
 
 /**
- * Register {@link OMSInterceptor} to BeanDefinitionRegistry
+ * Register {@link OMSInterceptor} to AccessPointContainer.
  *
  * @version OMS 1.0.0
  * @since OMS 1.0.0
