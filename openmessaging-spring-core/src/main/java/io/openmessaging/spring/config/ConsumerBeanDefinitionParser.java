@@ -29,6 +29,8 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.w3c.dom.Element;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * Parser for the consumer element.
  *
@@ -46,7 +48,7 @@ public class ConsumerBeanDefinitionParser implements BeanDefinitionParser {
     private static final String ATTRIBUTE_LISTENER_CLASS_NAME = "listener";
     private static final String ATTRIBUTE_LISTENER_REF = "listener-ref";
 
-    private int consumerSequence = 0;
+    private final AtomicInteger consumerSequence = new AtomicInteger();
 
     @Override
     public BeanDefinition parse(Element element, ParserContext parserContext) {
@@ -57,7 +59,7 @@ public class ConsumerBeanDefinitionParser implements BeanDefinitionParser {
         Assert.hasText(queueName, String.format("%s can not be blank", ATTRIBUTE_QUEUE_NAME));
 
         if (!StringUtils.hasText(id)) {
-            id = String.format(CONSUMER_CONTAINER_ID, OMSSpringConsts.BEAN_ID_PREFIX, consumerSequence++);
+            id = String.format(CONSUMER_CONTAINER_ID, OMSSpringConsts.BEAN_ID_PREFIX, consumerSequence.getAndIncrement());
         }
         if (!StringUtils.hasText(accessPoint)) {
             accessPoint = OMSSpringConsts.DEFAULT_ACCESS_POINT_ID;
@@ -100,7 +102,7 @@ public class ConsumerBeanDefinitionParser implements BeanDefinitionParser {
             } catch (ClassNotFoundException e) {
                 throw new IllegalArgumentException(String.format("listener class not found, className %s", listenerClassName), e);
             }
-            listenerBeanId = String.format(CONSUMER_ID, OMSSpringConsts.BEAN_ID_PREFIX, consumerSequence++);
+            listenerBeanId = String.format(CONSUMER_ID, OMSSpringConsts.BEAN_ID_PREFIX, consumerSequence.getAndIncrement());
             listenerBeanDefinition = BeanDefinitionBuilder.rootBeanDefinition(listenerClass).getBeanDefinition();
             parserContext.getRegistry().registerBeanDefinition(listenerBeanId, listenerBeanDefinition);
         }

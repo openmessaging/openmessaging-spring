@@ -30,6 +30,8 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.w3c.dom.Element;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * Parser for the producer element.
  *
@@ -45,7 +47,7 @@ public class ProducerBeanDefinitionParser extends AbstractBeanDefinitionParser {
     private static final String ATTRIBUTE_LISTENER_CLASS_NAME = "listener";
     private static final String ATTRIBUTE_LISTENER_REF = "listener-ref";
 
-    private int producerSequence = 0;
+    private final AtomicInteger producerSequence = new AtomicInteger();
 
     @Override
     protected AbstractBeanDefinition parseInternal(Element element, ParserContext parserContext) {
@@ -98,7 +100,7 @@ public class ProducerBeanDefinitionParser extends AbstractBeanDefinitionParser {
             } catch (ClassNotFoundException e) {
                 throw new IllegalArgumentException(String.format("transactionCheckListener class not found, className: %s", listenerClassName), e);
             }
-            listenerBeanId = String.format(PRODUCER_TRANSACTION_LISTENER_ID, OMSSpringConsts.BEAN_ID_PREFIX, producerSequence++);
+            listenerBeanId = String.format(PRODUCER_TRANSACTION_LISTENER_ID, OMSSpringConsts.BEAN_ID_PREFIX, producerSequence.getAndIncrement());
             listenerBeanDefinition = BeanDefinitionBuilder.rootBeanDefinition(listenerClass).getBeanDefinition();
             parserContext.getRegistry().registerBeanDefinition(listenerBeanId, listenerBeanDefinition);
         }

@@ -41,7 +41,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Register {@link OMSMessageListener} to BeanDefinitionRegistry
+ * Register {@link OMSMessageListener} to BeanDefinitionRegistry.
  *
  * @version OMS 1.0.0
  * @since OMS 1.0.0
@@ -118,7 +118,7 @@ public class ConsumerRegistrar implements BeanPostProcessor, BeanFactoryAware, S
                 && parameterTypes[1].equals(MessageListener.Context.class));
 
         boolean isBatchListener = (parameterTypes.length == 2
-                && genericParameterTypes[0].getTypeName().equals(String.format("java.util.List<%s>", Message.class.getName()))
+                && genericParameterTypes[0].getTypeName().equals(String.format("%s<%s>", List.class.getName(), Message.class.getName()))
                 && parameterTypes[1].equals(BatchMessageListener.Context.class));
 
         if (!isListener && !isBatchListener) {

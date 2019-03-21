@@ -29,6 +29,8 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.w3c.dom.Element;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * Parser for the interceptor element.
  *
@@ -44,11 +46,11 @@ public class InterceptorBeanDefinitionParser implements BeanDefinitionParser {
     private static final String ATTRIBUTE_INTERCEPTOR_CLASS_NAME = "class";
     private static final String ATTRIBUTE_INTERCEPTOR_REF = "ref";
 
-    private int interceptorSequence = 0;
+    private final AtomicInteger interceptorSequence = new AtomicInteger();
 
     @Override
     public BeanDefinition parse(Element element, ParserContext parserContext) {
-        String id = String.format(INTERCEPTOR_CONTAINER_ID, OMSSpringConsts.BEAN_ID_PREFIX, interceptorSequence++);
+        String id = String.format(INTERCEPTOR_CONTAINER_ID, OMSSpringConsts.BEAN_ID_PREFIX, interceptorSequence.getAndIncrement());
         String accessPoint = element.getAttribute(ATTRIBUTE_ACCESS_POINT);
 
         if (!StringUtils.hasText(accessPoint)) {
@@ -91,7 +93,7 @@ public class InterceptorBeanDefinitionParser implements BeanDefinitionParser {
             } catch (ClassNotFoundException e) {
                 throw new IllegalArgumentException(String.format("interceptor class not found, className: %s", interceptorClassName), e);
             }
-            interceptorBeanId = String.format(INTERCEPTOR_ID, OMSSpringConsts.BEAN_ID_PREFIX, interceptorSequence++);
+            interceptorBeanId = String.format(INTERCEPTOR_ID, OMSSpringConsts.BEAN_ID_PREFIX, interceptorSequence.getAndIncrement());
             interceptorBeanDefinition = BeanDefinitionBuilder.rootBeanDefinition(interceptorClass).getBeanDefinition();
             parserContext.getRegistry().registerBeanDefinition(interceptorBeanId, interceptorBeanDefinition);
         }
