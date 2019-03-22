@@ -26,6 +26,7 @@ import io.openmessaging.spring.boot.adapter.MessageListenerReflectAdapter;
 import io.openmessaging.spring.boot.annotation.OMSMessageListener;
 import io.openmessaging.spring.support.AccessPointContainer;
 import io.openmessaging.spring.support.ConsumerContainer;
+import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -34,6 +35,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.core.annotation.AnnotationUtils;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -75,7 +77,7 @@ public class ConsumerRegistrar implements BeanPostProcessor, BeanFactoryAware, S
 
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-        Class<?> beanClass = bean.getClass();
+        Class<?> beanClass = AopUtils.getTargetClass(bean);
         OMSMessageListener classMessageListenerAnnotation = findClassMessageListenerAnnotation(beanClass);
 
         if (classMessageListenerAnnotation != null) {
@@ -95,11 +97,11 @@ public class ConsumerRegistrar implements BeanPostProcessor, BeanFactoryAware, S
     }
 
     protected OMSMessageListener findClassMessageListenerAnnotation(Class<?> beanClass) {
-        return beanClass.getAnnotation(OMSMessageListener.class);
+        return AnnotationUtils.findAnnotation(beanClass, OMSMessageListener.class);
     }
 
     protected OMSMessageListener findMethodMessageListenerAnnotation(Method method) {
-        return method.getAnnotation(OMSMessageListener.class);
+        return AnnotationUtils.findAnnotation(method, OMSMessageListener.class);
     }
 
     protected Object getMessageListener(OMSMessageListener messageListenerAnnotation, Object bean) {
